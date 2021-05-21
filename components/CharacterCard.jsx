@@ -35,7 +35,7 @@ export default function CharacterCard({image, name}) {
 		>
 			<Image 
 				style={styles.image}
-				source={image}
+				source={{uri: image}}
 			/>
       <Text style={styles.font}>{name}</Text>
     </TouchableOpacity>

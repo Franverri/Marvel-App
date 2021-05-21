@@ -22,11 +22,12 @@ En este workshop vamos a crear una aplicación mobile utilizando React Native, p
 
 La idea del workshop es crear una aplicación sobre Marvel en la cual se incluyan por lo menos las siguientes funcionalidades:
 
- - Poder mostrar un listado de todos los personajes de Marvel (Incluyendo nombre y foto)
+ - Poder mostrar un listado de personajes de Marvel (Incluyendo nombre y foto)
  - Poder filtrar el listado de personajes a partir de un input que ingrese el usuario y devuelva solo los personajes que comiencen con dicha palabra
  - Poder ir al detalle del personaje donde se deben poder seleccionar dos subpantallas:
     * Ver nuevamente el nombre y su foto pero también agregando la descripción 
     * Ver un listado de comics en los cuales aparece dicho personaje
+- __EXTRA__: Hacer que el listado de personajes sea un scroll "infinito" que vaya cargando más personajes a medida que llegué al final de la lista
 - __EXTRA__: Poder agregar/quitar personajes a una lista de favoritos
 
 ## Imagenes ilustrativas de ejemplo
@@ -302,3 +303,19 @@ export default function Detail() {
 </p>
 
 Por el momento los componentes `Information` y `Comics` simplementen seran un `<View>` con un `<Text>`, más adelante volveremos sobre ellos para implementarlos bien. Por lo que por ahora habrá que simplemente crear dichos componentes en la carpeta components e importalos en `Detail`.
+
+Si quieren cambiar los iconos del Tab Navigator pueden buscar el listado completo en https://ionic.io/ionicons o incluso pueden utilizar otros paquetes de íconos si prefieren.
+
+### Obtener personajes desde la API
+
+Empecemos a darle más forma a nuestra aplicación sacando los dos personajes hardcodeados que tenemos en `Home` y utilizando los que devuelva la API. En primer lugar vamos a probar si la conexión de la API es exitosa intentado hacer un request cuando el componente `Home` se monta.
+
+Para ello vamos a utilizar `axios` y un paquete llamado `md5` para lograr el hash que nos pide la API de Marvel, nuevamente van a estar instalados en este proyecto pero si lo hacen por su cuenta tendran que ejecutar:
+
+```bash
+  npm install axios md5
+```
+
+<p align="center">
+  <img src="./screens/3.jpeg" style="width: 30%"/>
+</p>
