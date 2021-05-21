@@ -348,13 +348,14 @@ import axios from 'axios';
 export default function Home() {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const { ts, apikey, hash, baseURL } = apiParams;
 
   useEffect(() => {
-    axios.get('https://gateway.marvel.com/v1/public/characters', {
+    axios.get(`${baseURL}/v1/public/characters`, {
       params: {
-        ts: apiParams.ts,
-        apikey: apiParams.apikey,
-        hash: apiParams.hash
+        ts,
+        apikey,
+        hash
       }
     })
       .then(response => setData(response.data.data.results))
