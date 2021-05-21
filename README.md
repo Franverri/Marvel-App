@@ -256,4 +256,49 @@ export default function App() {
 }
 ```
 
-Y obviamente tenes que crear nuestro componente `Detatils` que queremos que sea a su vez un nested navigator ya que queremos tener dos tabs en la parte inferior de este pantalla para poder switchear entre `Information` y `Comics`.
+Y obviamente tenemos que crear nuestro componente `Detatils` que queremos que sea a su vez un nested navigator ya que queremos tener dos tabs en la parte inferior de este pantalla para poder switchear entre `Information` y `Comics`. Recuerden nuevamente que para este proyecto ya está instalado el módulo para usar un Tab Navigator pero si arrancan de cero van a tener que instalarlo.
+
+```js
+import * as React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import MaterialCommunityIcons from 'react-native-vector-icons/Ionicons';
+
+const Tab = createBottomTabNavigator();
+
+
+export default function Detail() {
+  return (
+    <Tab.Navigator
+      initialRouteName="Information"
+      tabBarOptions={{
+        activeTintColor: 'darkred'
+      }}
+    >
+      <Tab.Screen 
+        name="Information" 
+        component={Information} 
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="information-circle" color={color} size={size} />
+          )
+        }}
+      />
+      <Tab.Screen 
+        name="Comics" 
+        component={Comics} 
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="book" color={color} size={size} />
+          )
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+```
+
+<p align="center">
+  <img src="./screens/2.jpeg" style="width: 30%"/>
+</p>
+
+Por el momento los componentes `Information` y `Comics` simplementen seran un `<View>` con un `<Text>`, más adelante volveremos sobre ellos para implementarlos bien. Por lo que por ahora habrá que simplemente crear dichos componentes en la carpeta components e importalos en `Detail`.
