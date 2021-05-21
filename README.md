@@ -43,7 +43,7 @@ La URL del request se formará de la siguiente forma:
 http://gateway.marvel.com/v1/public/characters?ts={ts}&apikey={publicKey}&hash={md5Hash}
 
 Donde:
- * ts: es un timestamp en el cual pueden ingresar cualquier valor, por ejemplo `henry`
+ * ts: es un timestamp en el cual pueden ingresar cualquier valor, por ejemplo `henry` o tomar el timestamp de la fecha actual con `Date.now()`
  * publicKey: es la clave pública que les figura en la sección que recién mencionamos arriba
  * md5Hash: es un hash utilizando md5 y pasandole como inputs ts, privateKey y publicKey
 
@@ -314,6 +314,73 @@ Para ello vamos a utilizar `axios` y un paquete llamado `md5` para lograr el has
 
 ```bash
   npm install axios md5
+```
+
+Para mejor organizacion vamos a crear un archivo `config.js` dentro de la carpeta `MarvelApp` donde haremos la lógica del hash md5 para luego simplemente traer los valores en los componentes que tengan que hacer los request y usarlos. 
+
+```js
+import md5 from 'md5';
+// Toma los valores de la clave pública y provada desde el archivo .env
+import { publicKey, privateKey } from '@env';
+
+const ts = Date.now();
+// Generamos el hash que nos pide la API pasandole como parámetro 
+// a la función md5 un string que concatene el ts + privateKey + publicKey
+const hash = md5(`${ts}${privateKey}${publicKey}`);
+
+// Exportamos un objeto con los datos necesarios para usar la API
+// para que luego podamos importarlo desde cualquier componente
+const apiParams = {
+  ts,
+  apikey: publicKey,
+  hash,
+	baseURL: 'https://gateway.marvel.com'
+};
+export default apiParams;
+```
+
+Ahora vamos a modificar el componente `Home` para que haga el request:
+
+```js
+import apiParams from '../config.js';
+import axios from 'axios';
+
+export default function Home() {
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    axios.get('https://gateway.marvel.com/v1/public/characters', {
+      params: {
+        ts: apiParams.ts,
+        apikey: apiParams.apikey,
+        hash: apiParams.hash
+      }
+    })
+      .then(response => setData(response.data.data.results))
+      .catch(error => console.error(error))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return (
+    <View>
+      {isLoading 
+        ? <ActivityIndicator size="large" color="#00ff00" /> 
+        : (
+          <FlatList
+            data={data}
+            keyExtractor={({ id }) => id.toString()}
+            renderItem={({ item }) => (
+              <CharacterCard 
+                image={`${item?.thumbnail?.path}.${item?.thumbnail.extension}`} 
+                name={item.name} />
+            )}
+          />
+        )
+      }
+    </View>
+  );
+}
 ```
 
 <p align="center">

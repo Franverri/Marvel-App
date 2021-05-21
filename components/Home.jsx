@@ -9,7 +9,6 @@ export default function Home() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    console.log("Haciendo request");
     axios.get('https://gateway.marvel.com/v1/public/characters', {
       params: {
         ts: apiParams.ts,
