@@ -46,4 +46,36 @@ Donde:
  * publicKey: es la clave pública que les figura en la sección que recién mencionamos arriba
  * md5Hash: es un hash utilizando md5 y pasandole como inputs ts, privateKey y publicKey
 
-Como siempre estos datos son sensibles por lo que lo recuerden no subirlos a su repositorio de código.
+Como siempre estos datos son sensibles por lo que lo recuerden no subirlos a su repositorio de código. Para evitar esto tienen instalado como dependencia dentro del proyecto el módulo `react-native-dotenv`. Adicionlamente ya se encuentra configurado en el archivo `babel.config.js` dentro de `plugins`:
+
+```js
+module.exports = function(api) {
+  api.cache(true);
+  return {
+    presets: ['babel-preset-expo'],
+    plugins: [
+      ["module:react-native-dotenv", {
+        "moduleName": "@env",
+        "path": ".env",
+        "blacklist": null,
+        "whitelist": null,
+        "safe": false,
+        "allowUndefined": true
+      }]
+    ]
+  };
+};
+```
+
+Esto les va a permitir utilizar cualquier variable definida dentro de un archivo `.env` que debe estar definido al mismo nivel del archivo de configuración de babel. En nuestro caso ustedes deberían definir las siguientes propiedades:
+
+```
+publicKey=...
+privateKey=...
+```
+
+Luego podrán utilizarlas desde cualquier archivo del proyecto importándolas de la siguiente forma:
+
+```js
+import { publicKey, privateKey } from '@env';
+```
