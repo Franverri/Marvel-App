@@ -391,7 +391,7 @@ export default function Home() {
 
 ### Obtener detalles de un personaje en particular
 
-Ya teniendo la lista de personajes ahora enfoquémosnos en los detalles de uno de ellos en particular al hacerle click. Para esto vamos a necesitar hacer un request a `https://gateway.marvel.com/v1/public/characters/{characterId}` por lo que vamos a tener que agregar también que nuestro componente `CharacterCard` reciba dicho ID para pasarlo al componente `Information`, pasando por la pantalla de `Detail`.
+Ya teniendo la lista de personajes ahora enfoquémosnos en los detalles de uno de ellos en particular al hacerle click. Para esto vamos a necesitar hacer un request a `https://gateway.marvel.com/v1/public/characters/{characterId}`. Una vez obtenidos dichos datos deberíamos pasarselos al componentet `Information` (Mostraremos allí el nombre, la descripción y una imagen del personaje).
 
 ```js
 export default function Home() {
@@ -420,7 +420,35 @@ export default function Home() {
 ```
 
 ```js
+import React, { useState, useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import MaterialCommunityIcons from 'react-native-vector-icons/Ionicons';
+import Information from './Information';
+import Comics from './Comics';
+import apiParams from '../config.js';
+import axios from 'axios';
+
+const Tab = createBottomTabNavigator();
+
 export default function Detail({ route }) {
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const { ts, apikey, hash, baseURL } = apiParams;
+
+  useEffect(() => {
+    axios.get(`${baseURL}/v1/public/characters/${route.params.id}`, {
+      params: {
+        ts,
+        apikey,
+        hash
+      }
+    })
+      .then(response => setData(response.data.data.results[0]))
+      .catch(error => console.error(error))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <Tab.Navigator
       initialRouteName="Information"
@@ -436,54 +464,43 @@ export default function Detail({ route }) {
           )
         }}
       >
-        {() => <Information id={route.params.id} />}
+        {() => 
+          (isLoading
+            ? <ActivityIndicator size="large" color="#00ff00" /> 
+            : <Information 
+                image={`${data?.thumbnail?.path}.${data.thumbnail.extension}`}
+                name={data.name}
+                description={data.description} 
+              />
+          )
+        }
       </Tab.Screen>
-      ...
+      <Tab.Screen 
+        name="Comics" 
+        component={Comics} 
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="book" color={color} size={size} />
+          )
+        }}
+      />
     </Tab.Navigator>
   );
 }
 ```
 
-Ahora ya podemos hacer uso del ID dentro del componentet `Information` mediante el objeto `route.params`:
+Ahora ya podemos hacer uso de las propiedades que pasa el componente `Detail` al componente `Information`:
 
 ```js
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ActivityIndicator } from 'react-native';
-import apiParams from '../config.js';
-import axios from 'axios';
-
-export default function Information({ id }) {
-  const [isLoading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-  const { ts, apikey, hash, baseURL } = apiParams;
-
-  useEffect(() => {
-    axios.get(`${baseURL}/v1/public/characters/${id}`, {
-      params: {
-        ts,
-        apikey,
-        hash
-      }
-    })
-      .then(response => setData(response.data.data.results[0]))
-      .catch(error => console.error(error))
-      .finally(() => setLoading(false));
-  }, []);
-
+export default function Information({ image, name, description }) {
   return (
     <View style={styles.container}>
-      {isLoading 
-        ? <ActivityIndicator size="large" color="#00ff00" /> 
-        : (
-          <>
-            <Image 
-              source={{uri: `${data?.thumbnail?.path}.${data?.thumbnail?.extension}`}}
-            />
-            <Text>{data.name}</Text>
-            <Text>{data.description}</Text>
-          </>
-        )
-      }
+      <Image 
+        style={styles.image}
+        source={{uri: image}}
+      />
+      <Text style={styles.title}>{name}</Text>
+      <Text style={styles.description}>{description}</Text>
     </View>
   )
 }

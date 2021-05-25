@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ActivityIndicator, StyleSheet, Dimensions } from 'react-native';
-import apiParams from '../config.js';
-import axios from 'axios';
+import React from 'react';
+import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round(dimensions.width * 9 / 16);
@@ -33,39 +31,15 @@ const styles = StyleSheet.create({
   }
 });
 
-export default function Information({ id }) {
-  const [isLoading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-  const { ts, apikey, hash, baseURL } = apiParams;
-
-  useEffect(() => {
-    axios.get(`${baseURL}/v1/public/characters/${id}`, {
-      params: {
-        ts,
-        apikey,
-        hash
-      }
-    })
-      .then(response => setData(response.data.data.results[0]))
-      .catch(error => console.error(error))
-      .finally(() => setLoading(false));
-  }, []);
-
+export default function Information({ image, name, description }) {
   return (
     <View style={styles.container}>
-      {isLoading 
-        ? <ActivityIndicator size="large" color="#00ff00" /> 
-        : (
-          <>
-            <Image 
-              style={styles.image}
-              source={{uri: `${data?.thumbnail?.path}.${data?.thumbnail?.extension}`}}
-            />
-            <Text style={styles.title}>{data.name}</Text>
-            <Text style={styles.description}>{data.description}</Text>
-          </>
-        )
-      }
+      <Image 
+        style={styles.image}
+        source={{uri: image}}
+      />
+      <Text style={styles.title}>{name}</Text>
+      <Text style={styles.description}>{description}</Text>
     </View>
   )
 }
