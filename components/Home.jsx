@@ -32,6 +32,7 @@ export default function Home() {
             keyExtractor={({ id }) => id.toString()}
             renderItem={({ item }) => (
               <CharacterCard 
+                id={item.id}
                 image={`${item?.thumbnail?.path}.${item?.thumbnail.extension}`} 
                 name={item.name} />
             )}

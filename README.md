@@ -387,3 +387,108 @@ export default function Home() {
 <p align="center">
   <img src="./screens/3.jpeg" style="width: 30%"/>
 </p>
+
+
+### Obtener detalles de un personaje en particular
+
+Ya teniendo la lista de personajes ahora enfoquémosnos en los detalles de uno de ellos en particular al hacerle click. Para esto vamos a necesitar hacer un request a `https://gateway.marvel.com/v1/public/characters/{characterId}` por lo que vamos a tener que agregar también que nuestro componente `CharacterCard` reciba dicho ID para pasarlo al componente `Information`, pasando por la pantalla de `Detail`.
+
+```js
+export default function Home() {
+  ...
+
+  return (
+    <View>
+      {isLoading 
+        ? <ActivityIndicator size="large" color="#00ff00" /> 
+        : (
+          <FlatList
+            data={data}
+            keyExtractor={({ id }) => id.toString()}
+            renderItem={({ item }) => (
+              <CharacterCard 
+                id={item.id}
+                image={`${item?.thumbnail?.path}.${item?.thumbnail.extension}`} 
+                name={item.name} />
+            )}
+          />
+        )
+      }
+    </View>
+  );
+}
+```
+
+```js
+export default function Detail({ route }) {
+  return (
+    <Tab.Navigator
+      initialRouteName="Information"
+      tabBarOptions={{
+        activeTintColor: 'darkred'
+      }}
+    >
+      <Tab.Screen 
+        name="Information" 
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="information-circle" color={color} size={size} />
+          )
+        }}
+      >
+        {() => <Information id={route.params.id} />}
+      </Tab.Screen>
+      ...
+    </Tab.Navigator>
+  );
+}
+```
+
+Ahora ya podemos hacer uso del ID dentro del componentet `Information` mediante el objeto `route.params`:
+
+```js
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, ActivityIndicator } from 'react-native';
+import apiParams from '../config.js';
+import axios from 'axios';
+
+export default function Information({ id }) {
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const { ts, apikey, hash, baseURL } = apiParams;
+
+  useEffect(() => {
+    axios.get(`${baseURL}/v1/public/characters/${id}`, {
+      params: {
+        ts,
+        apikey,
+        hash
+      }
+    })
+      .then(response => setData(response.data.data.results[0]))
+      .catch(error => console.error(error))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      {isLoading 
+        ? <ActivityIndicator size="large" color="#00ff00" /> 
+        : (
+          <>
+            <Image 
+              source={{uri: `${data?.thumbnail?.path}.${data?.thumbnail?.extension}`}}
+            />
+            <Text>{data.name}</Text>
+            <Text>{data.description}</Text>
+          </>
+        )
+      }
+    </View>
+  )
+}
+```
+
+<p align="center">
+  <img src="./screens/4.jpeg" style="width: 30%"/>
+</p>

@@ -26,12 +26,12 @@ const styles = StyleSheet.create({
 });
 
 
-export default function CharacterCard({image, name}) {
+export default function CharacterCard({id, image, name}) {
 	const navigation = useNavigation();
   return (
     <TouchableOpacity 
 			style={styles.container}
-			onPress={() => navigation.navigate('Detail')}
+			onPress={() => navigation.navigate('Detail', { id })}
 		>
 			<Image 
 				style={styles.image}
