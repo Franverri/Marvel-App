@@ -634,3 +634,8 @@ export default function Comic({ name, image }) {
 }
 ```
 
+<p align="center">
+  <img src="./screens/5.jpeg" style="width: 30%"/>
+</p>
+
+Faltaría ahora cambiar la `<View>` por una `<ScrollView>` o una `<FlatList>` para poder deslizar para ver aquellos comics que no entran en pantalla. Pero para cambiar un poco vamos a intentar hacer que el scroll sea horizontal.

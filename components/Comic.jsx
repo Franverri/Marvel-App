@@ -9,7 +9,8 @@ const styles = StyleSheet.create({
 		borderColor: 'darkred',
 		borderRadius: 10,
 		alignItems: 'center',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		margin: 20
 	},
 	image: {
 		marginTop: 10,

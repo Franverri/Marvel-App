@@ -30,7 +30,7 @@ export default function Comics({ listComics }) {
   }, []);
 
   return (
-    <View>
+    <View style={{alignItems: 'center'}}>
       {
         isLoading 
           ? <ActivityIndicator size="large" color="#00ff00" /> 
