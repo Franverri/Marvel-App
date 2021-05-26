@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, FlatList, ActivityIndicator } from 'react-native';
 import Comic from './Comic';
 import apiParams from '../config.js';
 import axios from 'axios';
@@ -30,17 +30,24 @@ export default function Comics({ listComics }) {
   }, []);
 
   return (
-    <View style={{alignItems: 'center'}}>
+    <View style={{ flex: 1 }}>
       {
         isLoading 
           ? <ActivityIndicator size="large" color="#00ff00" /> 
-          : data.map(c => (
-            <Comic 
-              key={c.id}
-              name={c.title} 
-              image={`${c?.thumbnail?.path}.${c.thumbnail.extension}`}  
-            />
-          ))
+          : <FlatList
+              contentContainerStyle={{alignItems: 'center'}}
+              data={data}
+              keyExtractor={({ id }) => id.toString()}
+              horizontal
+              pagingEnabled
+              renderItem={({ item }) => (
+                <Comic 
+                  key={item.id}
+                  name={item.title} 
+                  image={`${item?.thumbnail?.path}.${item.thumbnail.extension}`}  
+                />
+          )}
+        />
       }
     </View>
   )
