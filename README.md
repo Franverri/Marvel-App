@@ -509,3 +509,128 @@ export default function Information({ image, name, description }) {
 <p align="center">
   <img src="./screens/4.jpeg" style="width: 30%"/>
 </p>
+
+### Obtener comics de un personaje en particular
+
+Nos falta completar la pantalla de comics por lo que podríamos pasarle como prop la lista de comics que si se fijan ya la obtenemos cuando hacemos el request para los detalles del personaje en `data.comics.items`. Por lo que vamos a pasarselo al componente `Comics` y luego allí crearemos otro componente `Comic` para renderizar cada uno de la lista.
+
+```js
+...
+      <Tab.Screen 
+        name="Comics" 
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="book" color={color} size={size} />
+          )
+        }}
+      >
+        {() => 
+          (isLoading
+            ? <ActivityIndicator size="large" color="#00ff00" /> 
+            : <Comics
+                listComics={data?.comics?.items} 
+              />
+          )
+        }
+      </Tab.Screen>
+...
+```
+
+Ahora por cada elemento en `listComics` vamos a renderizar un componente `Comic`:
+
+```js
+import * as React from 'react';
+import { View, Text } from 'react-native';
+import Comic from './Comic';
+
+export default function Comics({ listComics }) {
+  return (
+    <View>
+      {
+        listComics?.map(c => (
+          <Comic name={c.name} />
+        ))
+      }
+    </View>
+  )
+}
+```
+
+```js
+import * as React from 'react';
+import { View, Text } from 'react-native';
+
+export default function Comic({ name }) {
+  return (
+    <View>
+			<Text>{name}</Text>
+    </View>
+  )
+}
+```
+
+¿No sería mucho más lindo tener las portadas de los comics y no solo su nombre? Bueno obtengamos esos datos entonces haciendo un request por cada comic a su `resourceURI`. Esto lo haremos desde `Comics` y a `Comic` simplemente le pasaremos el nombre y la imagen correspondiente para que lo renderice (Recuerden que cuando estamos agregando muchos componentes con la misma estructura debemos indicarle a react una key para que los pueda diferenciar, en este caso voy a usar el ID del comic):
+
+```js
+import React, { useState, useEffect } from 'react';
+import { View, ActivityIndicator } from 'react-native';
+import Comic from './Comic';
+import apiParams from '../config.js';
+import axios from 'axios';
+
+export default function Comics({ listComics }) {
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const { ts, apikey, hash, baseURL } = apiParams;
+
+  useEffect(() => {
+    const promisesArray = listComics.map(c => (
+      axios.get(c.resourceURI, {
+        params: {
+          ts,
+          apikey,
+          hash
+        }      
+      })
+    ));
+    
+    Promise.all(promisesArray)
+      .then(responses => setData(responses.map(r => (
+        r?.data?.data?.results[0]
+      ))))
+      .catch(error => console.error(error))
+      .finally(() => setLoading(false));
+
+  }, []);
+
+  return (
+    <View>
+      {
+        isLoading 
+          ? <ActivityIndicator size="large" color="#00ff00" /> 
+          : data.map(c => (
+            <Comic 
+              key={c.id}
+              name={c.title} 
+              image={`${c?.thumbnail?.path}.${c.thumbnail.extension}`}  
+            />
+          ))
+      }
+    </View>
+  )
+}
+```
+
+```js
+export default function Comic({ name, image }) {
+  return (
+    <View>
+			<Image
+				source={{uri: image}}
+			/>
+			<Text>{name}</Text>
+    </View>
+  )
+}
+```
+
