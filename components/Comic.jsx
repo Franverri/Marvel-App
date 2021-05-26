@@ -1,7 +1,14 @@
 import * as React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+	outer: {
+		width,
+		alignItems: "center",
+		justifyContent: "center"
+	},
 	container: {
 		width: 260,
 		backgroundColor: 'rgb(223, 184, 184)',
@@ -25,11 +32,13 @@ const styles = StyleSheet.create({
 
 export default function Comic({ name, image }) {
   return (
-    <View style={styles.container}>
-			<Image style={styles.image}
-				source={{uri: image}}
-			/>
-			<Text style={styles.font}>{name}</Text>
-    </View>
+		<View style={styles.outer}>
+			<View style={styles.container}>
+				<Image style={styles.image}
+					source={{uri: image}}
+				/>
+				<Text style={styles.font}>{name}</Text>
+			</View>
+		</View>
   )
 }

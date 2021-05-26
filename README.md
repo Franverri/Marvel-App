@@ -639,3 +639,38 @@ export default function Comic({ name, image }) {
 </p>
 
 Faltaría ahora cambiar la `<View>` por una `<ScrollView>` o una `<FlatList>` para poder deslizar para ver aquellos comics que no entran en pantalla. Pero para cambiar un poco vamos a intentar hacer que el scroll sea horizontal.
+
+La idea es utilizar una `<FlatList>` similar a cuando lo hicimos con la pantalla `Home` pero ahora agregándole la propiedades `horizontal` que va a permitir que el scrolling sea horizontal.
+
+```js
+    <View style={{ flex: 1 }}>
+      {
+        isLoading 
+          ? <ActivityIndicator size="large" color="#00ff00" /> 
+          : <FlatList
+              contentContainerStyle={{alignItems: 'center'}}
+              data={data}
+              keyExtractor={({ id }) => id.toString()}
+              horizontal
+              renderItem={({ item }) => (
+                <Comic 
+                  key={item.id}
+                  name={item.title} 
+                  image={`${item?.thumbnail?.path}.${item.thumbnail.extension}`}  
+                />
+          )}
+        />
+      }
+    </View>
+```
+
+<p align="center">
+  <img src="./screens/6.jpeg" style="width: 30%"/>
+</p>
+
+Adicionalmente si prefieren que se vea un comic por "página" puede agregarle también la propiedad `pagingEnabled` a la `FlatList` y hacer que el componente `Comic` ocupe la totalidad de la pantalla.
+
+### Input de búsqueda
+
+De los requerimientos obligatorios para esta actividad nos estaría faltando poder buscar por nombre algún personaje, para ello vamos a necesitar primero agregar un input para que el usuario pueda escribir allí lo que desee buscar.
+
