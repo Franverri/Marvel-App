@@ -30,9 +30,6 @@ La idea del workshop es crear una aplicación sobre Marvel en la cual se incluya
 - __EXTRA__: Hacer que el listado de personajes sea un scroll "infinito" que vaya cargando más personajes a medida que llegué al final de la lista
 - __EXTRA__: Poder agregar/quitar personajes a una lista de favoritos
 
-## Imagenes ilustrativas de ejemplo
-
-TODO
 
 ## Configuración API
 
@@ -47,7 +44,13 @@ Donde:
  * publicKey: es la clave pública que les figura en la sección que recién mencionamos arriba
  * md5Hash: es un hash utilizando md5 y pasandole como inputs ts, privateKey y publicKey
 
-Como siempre estos datos son sensibles por lo que lo recuerden no subirlos a su repositorio de código. Para evitar esto tienen instalado como dependencia dentro del proyecto el módulo `react-native-dotenv`. Adicionlamente ya se encuentra configurado en el archivo `babel.config.js` dentro de `plugins`:
+Como siempre estos datos son sensibles por lo que lo recuerden no subirlos a su repositorio de código. Para evitar esto tienen que instalar como dependencia dentro del proyecto el módulo `react-native-dotenv`.
+
+```bash
+npm i react-native-dotenv
+```
+
+Adicionlamente deben agregar dentro del archivo `babel.config.js` una propiedad `plugins` quedando el archivo de la siguiente forma:
 
 ```js
 module.exports = function(api) {
@@ -96,7 +99,7 @@ Comenzaremos pensando que pantallas vamos a tener para ya dejarlas configuradas 
 
  ### Home Screen
 
-Como vamos a querer que a partir del click en algun personaje listado en esta pantalla nos lleve a otra vamos a utilizar un Stack Navigator:
+Como vamos a querer que a partir del click en algun personaje listado en esta pantalla nos lleve a otra vamos a utilizar un Stack Navigator (Recuerden que deben ir instalando los módulos necesarios como se fue explicando durante el workshop):
 
 ```js
 import * as React from 'react';
@@ -257,7 +260,7 @@ export default function App() {
 }
 ```
 
-Y obviamente tenemos que crear nuestro componente `Detatils` que queremos que sea a su vez un nested navigator ya que queremos tener dos tabs en la parte inferior de este pantalla para poder switchear entre `Information` y `Comics`. Recuerden nuevamente que para este proyecto ya está instalado el módulo para usar un Tab Navigator pero si arrancan de cero van a tener que instalarlo.
+Y obviamente tenemos que crear nuestro componente `Detatils` que queremos que sea a su vez un nested navigator ya que queremos tener dos tabs en la parte inferior de este pantalla para poder switchear entre `Information` y `Comics`. Recuerden nuevamente que deben instalar el módulo para usar un Tab Navigator.
 
 ```js
 import * as React from 'react';
@@ -310,7 +313,7 @@ Si quieren cambiar los iconos del Tab Navigator pueden buscar el listado complet
 
 Empecemos a darle más forma a nuestra aplicación sacando los dos personajes hardcodeados que tenemos en `Home` y utilizando los que devuelva la API. En primer lugar vamos a probar si la conexión de la API es exitosa intentado hacer un request cuando el componente `Home` se monta.
 
-Para ello vamos a utilizar `axios` y un paquete llamado `md5` para lograr el hash que nos pide la API de Marvel, nuevamente van a estar instalados en este proyecto pero si lo hacen por su cuenta tendran que ejecutar:
+Para ello vamos a utilizar `axios` y un paquete llamado `md5` para lograr el hash que nos pide la API de Marvel, nuevamente van a tener que instalarlos:
 
 ```bash
   npm install axios md5
@@ -674,7 +677,7 @@ Adicionalmente si prefieren que se vea un comic por "página" puede agregarle ta
 
 De los requerimientos obligatorios para esta actividad nos estaría faltando poder buscar por nombre algún personaje, para ello vamos a necesitar primero agregar un input para que el usuario pueda escribir allí lo que desee buscar.
 
-Para este punto vamos a utilizar un kit de UI, podemos elegir entre `React Native Elements` y `React Native Paper` que ya tienen algunos componentes desarrollamos y podemos utilizarlos como por ejemplo una `Searchbar`. Para poder usarlo debemos instalarl el que elijan (Nuevamente en la estructura del proyecto ya los van a tener si hicieron el `npm install` inicial pero sino deberan correr uno de los siguientes comando):
+Para este punto vamos a utilizar un kit de UI, podemos elegir entre `React Native Elements` y `React Native Paper` que ya tienen algunos componentes desarrollamos y podemos utilizarlos como por ejemplo una `Searchbar`. Para poder usarlo debemos instalarl el que elijan:
 
 ```bash
 // Para React Native Elements
