@@ -674,3 +674,71 @@ Adicionalmente si prefieren que se vea un comic por "página" puede agregarle ta
 
 De los requerimientos obligatorios para esta actividad nos estaría faltando poder buscar por nombre algún personaje, para ello vamos a necesitar primero agregar un input para que el usuario pueda escribir allí lo que desee buscar.
 
+Para este punto vamos a utilizar un kit de UI, podemos elegir entre `React Native Elements` y `React Native Paper` que ya tienen algunos componentes desarrollamos y podemos utilizarlos como por ejemplo una `Searchbar`. Para poder usarlo debemos instalarl el que elijan (Nuevamente en la estructura del proyecto ya los van a tener si hicieron el `npm install` inicial pero sino deberan correr uno de los siguientes comando):
+
+```bash
+// Para React Native Elements
+npm install react-native-elements
+
+// Para React Native Paper
+npm install react-native-paper
+```
+
+En nuestro caso vamos a usar `React Native Paper` por lo que tendremos que importar el componente `Searchbar` dentro de `Home`:
+
+```js
+import { Searchbar } from 'react-native-paper';
+```
+
+Adicionalmente vamos a crear otro estado dentro de `Home` para mantener actualizado el valor escrito dentro de la `Searchbar`:
+
+```js
+const [search, setSearch] = useState('');
+```
+
+Luego lo utilizamos como cualquier otro componente, vamos a agregarlo dentro de la condición de que no este cargando (Recuerden que deben devolver un único elemento por lo que van a tener que agrupar la `Searchbar` y la `FlatList` en un contenedor):
+
+```js
+<Searchbar
+  placeholder="Search for character..."
+  onChangeText={value => setSearch(value)}
+  value={search}
+  onIconPress={searchCharacter}
+  onSubmitEditing={searchCharacter}
+/>
+```
+
+Algunas cuestiones a tener en cuenta sobre el codigo de arriba:
+  * __onChangeText__: como el nombre lo indica va a ejecutar la función pasada como parámetro cuando el usuario escriba o borre algun caracter en la searchbar. En este caso simplemente estamos actualizando el valor del nuevo estado que acabamos de definir.
+  * __onIconPress__: se va a ejecutar la función pasada como parámetro cuando el usuario haga click en el icono de la searchbar que en este caso dejamos el default que es una lupa
+  * __onSubmitEditing__: se va a ejecutar la función pasada como parámetro cuando el usuario aprete desde el keyboard del celular el icono de búsqueda que es a su vez una lupa
+
+  Lo único que nos quedaría ahora es definir la función `searchCharacter` que debería hacer el llamado correspondiente a la API y guardas los resultados en el estado `data` que ya teníamos de antes:
+
+  ```js
+    function searchCharacter() {
+    if(search) {
+      setLoading(true);
+      axios.get(`${baseURL}/v1/public/characters`, {
+        params: {
+          ts,
+          apikey,
+          hash,
+          nameStartsWith: search
+        }
+      })
+        .then(response => setData(response.data.data.results))
+        .catch(error => console.error(error))
+        .finally(() => setLoading(false));
+    }
+  }
+  ```
+
+### Extra Funcionalidades
+
+Como bien se mencionó al comienzo del readme, la idea es que por su cuenta ahora intenten implementar las siguientes dos funcionalidades:
+
+- Hacer que el listado de personajes sea un scroll "infinito" que vaya cargando más personajes a medida que llegué al final de la lista
+- Poder agregar/quitar personajes a una lista de favoritos
+
+Para el primer caso van a tener que investigar un poco sobre las propiedades de la `FlatList` y para el segundo caso lo ideal es que investiguen sobre cómo almacenar información en el dispositivo para que si cierran la aplicación y vuelven a abrirla más tarde puedan mantener el listado de favoritos.
